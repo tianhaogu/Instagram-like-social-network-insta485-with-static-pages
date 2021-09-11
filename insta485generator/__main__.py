@@ -1,79 +1,88 @@
 """Build static HTML site from directory of HTML templates and plain files."""
-import click
+import sys
 import pathlib
-import jinja2
 import shutil
+import json
+import jinja2
+import click
+
 
 @click.command()
 @click.option('-o', "--output", type=click.Path(), help="Output directory.")
-@click.option('-v', "--verbose", help="Print more output.")
-@click.argument("INPUT_DIR", type=click.Path())
+@click.option('-v', "--verbose", is_flag=True, help="Print more output.")
+@click.argument("input_dir", type=click.Path())
+def main(input_dir, output, verbose):
+    """Templated static website generator."""
+    if not pathlib.Path(str(input_dir)).exists():
+        print("Input Directory {} doesn't exist.".format(str(input_dir)))
+        sys.exit(1)
 
-def main():
-    """Top level command line interface."""
-    if not pathlib.Path(str(INPUT_DIR)).exists():
-        print("Input Directory {} doesn't exist.".format(str(INPUT_DIR)))
-        exit(1)
-
-    output_path = None
     if not output:
-        output_path = pathlib.Path('/').joinpath(str(INPUT_DIR), 'html')
+        output_dir = pathlib.Path('/').joinpath(str(input_dir), "html")
     else:
-        output_path = output
-    if pathlib.Path(output_path).exists():
-        print("Output Directory {} already exists.".format(str(output_path)))
-        exit(1)
-
-    template_dir = pathlib.Path('/').joinpath(str(INPUT_DIR), 'templates')
-    template_env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(str(template_dir)),
-        audoescape=jinja2.select_autoescape(['html', 'xml']),
-    )
-    html_file = (pathlib.PurePath(template_dir).parts)[-1]
-    template_template = template_env.get_template(html_file)
-    
-    shutil.copy(template_template, output_path)
-
-    static_path = pathlib.Path('/').joinpath(output_path, 'static')
-    if pathlib.Path(static_path).exists():
-        for file in path.rglob('*'):
-            src_path = pathlib.Path('/').joinpath(static_path, file)
-            shutil.copy(src_path, output_path)
-    
-    render_output_path = pathlib.Path('/').joinpath(str(output_path), html_file)
-    if verbose:
-        print("Rendered {} -> {}".format(str(html_file), str(render_output_path)))
-
-
-    if not pathlib.Path(str(INPUT_DIR)).exists():
-        print("Input Directory {} doesn't exist.".format(str(INPUT_DIR)))
-        exit(1)
-
-    output_dir = None
-    if not output:
-        output_dir = pathlib.Path('/').joinpath(str(INPUT_DIR), "html")
-    else:
-        output_dir = pathlib.Path('/').joinpath(str(INPUT_DIR), str(output))
+        output_dir = pathlib.Path(str(output))
+    output_dir = str(output_dir).lstrip('/')
     if pathlib.Path(output_dir).exists():
         print("Ouput Directory {} already exists.".format(str(output_dir)))
-        exit(1)
+        sys.exit(1)
+    output_dir = pathlib.Path(str(output_dir))
+    output_dir.mkdir(exist_ok=True, parents=True)
 
-    static_dir = pathlib.Path('/').joinpath(str(output_dir), "static")
-    if static_dir.exists():
-        for file in static_dir.rglob('*'):
-            src_dir = pathlib.Path('/').joinpath(str(static_dir), str(file))
-            shutil.copy(src_dir, output_dir)
+    static_dir = pathlib.Path('/').joinpath(str(input_dir), "static")
+    static_dir = str(static_dir).lstrip('/')
+    if pathlib.Path(static_dir).exists():
+        shutil.copytree(static_dir, output_dir, dirs_exist_ok=True)
+        if verbose:
+            click.echo("Copied {} -> {}".format(static_dir, output_dir))
 
-    for file in INPUT_DIR.rglob('*'):
-        if str(file) == "config.json":
+    template_dir = pathlib.Path('/').joinpath(str(input_dir), "templates")
+    template_dir = str(template_dir).lstrip('/')
+    for file in pathlib.Path(input_dir).glob('*'):
+        if str(file.parts[-1]) == "config.json":
             with open(str(file), 'r') as json_file:
-                json_object = json.load(json_file)
+                try:
+                    json_object = json.load(json_file)
+                except Exception as error:
+                    print("Json error is raised when loading json file: {}."
+                          .format(error))
+                try:
+                    template_env = jinja2.Environment(
+                        loader=jinja2.FileSystemLoader(str(template_dir)),
+                        autoescape=jinja2.select_autoescape(['html', 'xml']),
+                    )
+                except Exception as error:
+                    print("Jinja error or templates directory(file)-not-found \
+                          error is raised when loading Environment: {}."
+                          .format(error))
+                    sys.exit(1)
                 for json_dict_1 in json_object:
-                    for item_1 in json_dict_1:
-                        template_dir = pathlib.Path('/').joinpath(str(INPUT_DIR), "templates")
-                        try:
-                            template_env = jinj2.Environment
+                    try:
+                        template_html = template_env.get_template(
+                                        json_dict_1["template"])
+                    except Exception as error:
+                        print("Jinja error or index.html file-not-found error \
+                              is raised when get_template: {}.".format(error))
+                        sys.exit(1)
+                    url = json_dict_1["url"]
+                    url = url.lstrip('/')
+                    url = url.rstrip('/')
+                    html_output_dir = pathlib.Path('/').joinpath(
+                                      str(output_dir), url)
+                    html_output_dir = str(html_output_dir).lstrip('/')
+                    html_output_dir = pathlib.Path(str(html_output_dir))
+                    html_output_dir.mkdir(exist_ok=True, parents=True)
+                    html_output_path = pathlib.Path('/').joinpath(
+                                       html_output_dir, "index.html")
+                    html_output_path = str(html_output_path).lstrip('/')
+                    with open(html_output_path, 'w') as final_html:
+                        html_content = template_html.render(
+                                       json_dict_1["context"])
+                        final_html.write(html_content)
+                    if verbose:
+                        click.echo("Rendered {} -> {}".format(
+                                   json_dict_1["template"], html_output_path))
             break
+
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>insta485</title>
+	<style type="text/css">
+		.insta485Label {
+			font-family: 'Brush Script MT', cursive;
+		}
+		.followerClass {
+			width: 500px;
+			border-style: solid;
+		}
+	</style>
+</head>
+<body>
+	<div class="insta485Label"> 
+		<h3><a href="/"><img src="https://cdn.icon-icons.com/icons2/1995/PNG/512/instagram_internet_media_network_social_icon_123258.png" alt = "insta_logo" width="65" height="65"></a> | Insta485</h3>
+	</div>
+	<h4><a href="/explore/" style="text-decoration: none">explore</a> | <a href="{{'/u/' + logname + '/'}}" style="text-decoration: none">{{logname}}</a></h4>
+	<hr />
+	<h2>Followers</h2>
+	{% for follower in followers %}
+	<div class="followerClass">
+		<p><img src="{{follower['user_img_url']}}" alt = "{{follower['username'] + 'portrait'}}" width="65" height="65">
+		   <a href="{{'/u/' + follower['username'] + '/'}}" style="text-decoration: none">{{follower["username"]}} </a>
+		   {% if follower["logname_follows_username"] == True %} following {% endif %} 
+		   {% if follower["logname_follows_username"] == False and logname != follower["username"]%} not following {% endif %}</p>
+    </div>
+    <br>
+    {% endfor %}
+</body>
+</html>

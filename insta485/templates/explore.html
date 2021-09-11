@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>insta485</title>
+	<style type="text/css">
+		.insta485Lable {
+			font-family: 'Brush Script MT', cursive;
+		}
+		.notfollowClass {
+			width: 500px;
+			border-style: solid;
+		}
+	</style>
+</head>
+<body>
+	<div class="insta485Label"> 
+		<h3><a href="/"><img src="https://cdn.icon-icons.com/icons2/1995/PNG/512/instagram_internet_media_network_social_icon_123258.png" alt = "insta_logo" width="65" height="65"></a> | Insta485</h3>
+	</div>
+	<h4><a href="/explore/" style="text-decoration: none">explore</a> | <a href="{{'/u/' + logname + '/'}}" style="text-decoration: none">{{logname}}</a></h4>
+	<hr />
+	<h2>Discover People</h2>
+	{% for notfollow in not_following %}
+	<div class="notfollowClass">
+		<p><img src="{{notfollow['user_img_url']}}" alt="{{notfollow['username'] + ' portrait'}}" width="65" height="65">
+		<a href="{{'/u/' + notfollow['username'] + '/'}}" style="text-decoration: none">{{notfollow["username"]}}</a></p>
+	</div>
+	<br>
+	{% endfor %}
+</body>
+</html>

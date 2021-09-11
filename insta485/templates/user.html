@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<title>insta485</title>
+	<style type="text/css">
+		.insta485Label {
+		font-family: 'Brush Script MT', cursive;
+	}
+	</style>
+</head>
+<body>
+    <div class="insta485Label"> 
+		<h3><a href="/"><img src="https://cdn.icon-icons.com/icons2/1995/PNG/512/instagram_internet_media_network_social_icon_123258.png" alt = "insta_logo" width="65" height="65"></a> | Insta485</h3>
+	</div>
+	<h4><a href="/explore/" style="text-decoration: none">explore</a> | <a href="{{'/u/' + logname + '/'}}" style="text-decoration: none">{{logname}}</a></h4>
+	<hr />
+	<p>{{username}}</p>
+	<p>{% if logname_follows_username == True %} following {% endif %} {% if logname_follows_username == False and logname != username %} not following {% endif %}</p>
+	<p>{{total_posts}} {% if total_posts == 0 or total_posts >= 2 %} posts {% else %} post {% endif %}
+	   <a href="{{'/u/' + username + '/followers/'}}" style="text-decoration: none">{{followers}} {% if followers == 0 or followers >= 2 %} followers {% else %} follower {% endif %}</a>
+	   <a href="{{'/u/' + username + '/following/'}}" style="text-decoration: none">{{following}} following</a></p>
+	<p>{{fullname}}</p>
+	{% for post in posts %}
+	<a href="{{'/p/' + post['postid'] + '/'}}"><img src="{{post['img_url']}}" alt = "{{'post_id ' + post['postid']}}" width="430" height="350"></a>
+	{% endfor %}
+</body>
+</html>

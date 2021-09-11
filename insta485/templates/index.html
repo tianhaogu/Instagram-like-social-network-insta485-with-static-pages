@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>insta485</title>
+	<style type="text/css">
+		.insta485Label {
+			font-family: 'Brush Script MT', cursive;
+		}
+		.postClass {
+			width: 500px;
+			border-style: solid;
+		}
+	</style>
+</head>
+<body>
+	<div class="insta485Label">
+		<h3><a href="/"><img src="https://cdn.icon-icons.com/icons2/1995/PNG/512/instagram_internet_media_network_social_icon_123258.png" alt = "insta_logo" width="65" height="65"></a> | Insta485</h3>
+	</div>
+	<h4><a href="/explore/" style="text-decoration: none">explore</a> | <a href="{{'/u/' + logname + '/'}}" style="text-decoration: none">{{logname}}</a></h4>
+	<hr />
+    {% for post in posts %}
+    <div class="postClass">
+    	<p><a href="{{'/u/' + post['owner'] + '/'}}"><img src="{{post['owner_img_url']}}" alt="{{post['owner'] + ' portrait'}}" width="65" height="65"></a>
+    	   <a href="{{'/u/' + post['owner'] + '/'}}" style="text-decoration: none">{{post["owner"]}}</a>
+    	   <a href="{{'/p/' + post['postid'] + '/'}}" style="text-decoration: none">{{post["timestamp"]}}</a></p>
+    	<p><img src="{{post['img_url']}}" alt="{{'/p/' + post['postid'] + '/'}}" width="500" height="400"></p>
+    	<p>{{post["likes"]}} {% if post["likes"] == 0 or post["likes"] >= 2 %} likes {% else %} like {% endif %}</p>
+    	{% for comment in post["comments"] %}
+    	<p><a href="{{'/u/' + comment['owner'] + '/'}}" style="text-decoration: none">{{comment["owner"]}} </a>
+    	   {{comment["text"]}}</p>
+    	{% endfor %}
+    </div>
+    <br>
+    {% endfor %}
+</body>
+</html>
