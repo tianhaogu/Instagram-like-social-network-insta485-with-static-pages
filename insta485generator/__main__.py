@@ -51,6 +51,7 @@ def jsonhelper(input_dir, template_dir, output_dir, verbose):
                 except JSONDecodeError as error:
                     print("Json error is raised when loading json file: {}."
                           .format(error))
+                    sys.exit(1)
                 try:
                     template_env = jinja2.Environment(
                         loader=jinja2.FileSystemLoader(str(template_dir)),
