@@ -1,4 +1,4 @@
-# Instagram-Social-Network-with-Static-Pages-Development
+# Instagram-Social-Network-with-Static-Pages
 
 University of Michigan EECS-Cuatro-Ocho-cinco
 
