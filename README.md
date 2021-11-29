@@ -1,4 +1,4 @@
-EECS 485 Project 1 Solution
+Instagram-like-social-network-insta485-with-static-pages
 ===========================
 Templated Static Site Generator
 
