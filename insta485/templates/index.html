@@ -28,7 +28,8 @@
     	<p>{{post["likes"]}} {% if post["likes"] == 0 or post["likes"] >= 2 %} likes {% else %} like {% endif %}</p>
     	{% for comment in post["comments"] %}
     	<p><a href="{{'/u/' + comment['owner'] + '/'}}" style="text-decoration: none">{{comment["owner"]}} </a>
-    	   {{comment["text"]}}</p>
+    	   {{comment["text"]}}
+    	</p>
     	{% endfor %}
     </div>
     <br>
