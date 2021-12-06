@@ -1,4 +1,4 @@
-Instagram-like-social-network-insta485-with-static-pages
+Instagram-like-social-network-with-static-pages
 ===========================
 Templated Static Site Generator
 
